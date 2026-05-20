@@ -1,0 +1,461 @@
+.MainHud {
+    width: 100%;
+    height: 100%;
+}
+
+/* Do not put hittest="false" on MainHud. The hero cards need clicks. */
+
+.Hidden {
+    visibility: collapse;
+}
+
+/* =========================
+   Hero Select Overlay
+   ========================= */
+
+.HeroSelectOverlay {
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+}
+
+.HeroSelectDim {
+    width: 100%;
+    height: 100%;
+    background-color: gradient(
+        linear,
+        0% 0%,
+        0% 100%,
+        from(#05070bee),
+        color-stop(0.45, #101522f4),
+        to(#030406fb)
+    );
+}
+
+.HeroSelectHeader {
+    width: 100%;
+    flow-children: down;
+    horizontal-align: center;
+    margin-top: 72px;
+    z-index: 5;
+}
+
+.HeroSelectEyebrow {
+    horizontal-align: center;
+    text-align: center;
+    color: #c59a4a;
+    font-size: 14px;
+    letter-spacing: 3px;
+    text-shadow: 0px 2px 8px black;
+    text-transform: uppercase;
+}
+
+.HeroSelectTitle {
+    horizontal-align: center;
+    text-align: center;
+    color: white;
+    font-family: titleFont;
+    font-size: 54px;
+    letter-spacing: 2px;
+    text-shadow: 0px 4px 16px black;
+    margin-top: 4px;
+}
+
+.HeroSelectSubtitle {
+    horizontal-align: center;
+    text-align: center;
+    color: rgba(239, 246, 255, 0.58);
+    font-size: 18px;
+    text-shadow: 0px 2px 8px black;
+    margin-top: 4px;
+}
+
+.HeroSelectChoiceWrapper {
+    horizontal-align: center;
+    vertical-align: middle;
+    margin-top: 96px;
+    margin-bottom: 0px;
+    opacity: 1;
+    transform: none;
+    z-index: 10;
+}
+
+.HeroSelectChoices {
+    flow-children: right;
+    horizontal-align: center;
+    vertical-align: middle;
+}
+
+.HeroSelectActions {
+    horizontal-align: center;
+    margin-top: -20px;
+}
+
+/* =========================
+   Hero Cards
+   These intentionally mirror the Survivors power-up card structure.
+   ========================= */
+
+.HeroSelectCard {
+    width: 292px;
+    height: 620px;
+    margin: 0px 12px;
+    padding: 20px 18px 0px;
+    tooltip-position: top;
+    transition-property: brightness, transform;
+    transition-duration: 0.12s;
+    transition-timing-function: ease-out;
+}
+
+.HeroSelectCard:hover {
+    brightness: 1.35;
+    transform: translateY(-6px);
+}
+
+.HeroSelectCard.SelectedHero {
+    brightness: 1.85;
+    transform: translateY(-10px);
+}
+
+.HeroSelectCard .HeroImageContainer {
+    visibility: visible;
+    horizontal-align: center;
+    width: 132px;
+    height: 150px;
+    z-index: 2;
+    margin-bottom: -86px;
+}
+
+.HeroSelectCard .HeroImageContainer .ActorBackground {
+    width: 62px;
+    height: 62px;
+    background-color: rgb(6, 10, 15);
+    horizontal-align: center;
+    vertical-align: bottom;
+    transform: rotateZ(45deg) translateY(-16px);
+}
+
+.HeroSelectCard .HeroImageContainer #HeroImage {
+    width: 132px;
+    height: 150px;
+}
+
+.HeroSelectCard .PowerUpContainer {
+    width: 250px;
+    height: 500px;
+    margin-top: 92px;
+    margin-bottom: 45px;
+    flow-children: down;
+    horizontal-align: center;
+    background-color: gradient(linear, 0% 0%, 0% 100%, from(#2b3a4b), to(#0d1321));
+    box-shadow: 0px 8px 80px -6px rgba(0, 0, 0, 0.75);
+    overflow: noclip;
+}
+
+.HeroSelectCard .PowerUpBackground {
+    width: 100%;
+    height: 100%;
+    ignore-parent-flow: true;
+    blur: gaussian(12px);
+    opacity: 0.18;
+    saturation: 1.1;
+    background-size: cover;
+    background-position: center;
+}
+
+.HeroSelectCard .PowerupTexture {
+    ignore-parent-flow: true;
+    width: 100%;
+    height: 100%;
+    -s2-mix-blend-mode: multiply;
+    opacity: 0.55;
+}
+
+.HeroSelectCard .PowerupLabel {
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.42);
+    padding: 54px 8px 8px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.24);
+    color: rgba(236, 246, 255, 0.5);
+    text-shadow: 0px 1px 6px black;
+    font-size: 14px;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.HeroSelectCard .AbilityImageContainer {
+    margin-top: 24px;
+    horizontal-align: center;
+    padding: 5px;
+    background-color: gradient(linear, 0% 0%, 0% 100%, from(rgba(0, 0, 0, 0.6)), to(rgba(0, 0, 0, 0.4)));
+    border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+    box-shadow: inset 0px 1px 6px rgba(0, 0, 0, 0.6);
+}
+
+.HeroSelectCard .AbilityImageContainer #AbilityImage {
+    height: 88px;
+    width: height-percentage(100%);
+    box-shadow: 0px 2px 8px -1px rgba(0, 0, 0, 0.6);
+}
+
+.HeroSelectCard .AbilityImageShine {
+    width: 100%;
+    height: 100%;
+    border: 1px solid white;
+    border-brush: gradient(linear, 0% 0%, 0% 100%, from(rgba(255, 255, 255, 0.06)), to(rgba(255, 255, 255, 0.015)));
+}
+
+.HeroSelectCard .AbilityName {
+    margin: 14px 12px 8px;
+    horizontal-align: center;
+    text-align: center;
+    color: rgba(245, 245, 245, 0.96);
+    font-family: titleFont;
+    text-transform: uppercase;
+    font-weight: semi-bold;
+    font-size: 21px;
+    line-height: 1.25;
+    letter-spacing: 1px;
+    text-shadow: 0px 2px 8px rgba(0, 0, 0, 0.8);
+}
+
+.HeroSelectCard .PowerUpDescription {
+    width: 100%;
+    horizontal-align: center;
+    padding: 0px 16px;
+    margin-top: 4px;
+    line-height: 1.25;
+    color: rgba(239, 246, 255, 0.48);
+    text-align: center;
+    font-size: 15px;
+    text-shadow: 0px 2px 6px rgba(0, 0, 0, 0.8);
+}
+
+.HeroSelectCard .HeroStartingAbility {
+    width: 100%;
+    horizontal-align: center;
+    vertical-align: bottom;
+    ignore-parent-flow: true;
+    padding: 12px 12px 34px;
+    color: gradient(linear, 0% 35%, 0% 100%, from(#fff2df), color-stop(0.48, #ebc386), color-stop(0.52, #ba8c47), to(#ffc56f));
+    font-family: titleFont;
+    font-size: 18px;
+    text-align: center;
+    text-shadow: 0px 2px 12px black;
+    text-overflow: shrink;
+}
+
+.HeroSelectCard .PowerUpContainerBorder {
+    width: 250px;
+    height: 500px;
+    horizontal-align: center;
+    margin-top: 92px;
+    margin-bottom: 45px;
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    border-brush: gradient(linear, 0% 0%, 0% 100%, from(#fff2df), color-stop(0.48, #ddaf6b), color-stop(0.52, #674108), to(#a27531));
+    transition-property: border, transform, brightness;
+    transition-duration: 0.1s;
+}
+
+.HeroSelectCard.SelectedHero .PowerUpContainerBorder {
+    border: 4px solid white;
+    transform: scale3d(1.035, 1.015, 1);
+    brightness: 1.5;
+}
+
+/* Per-hero backgrounds */
+.HeroSelectCard.Hero_shen .PowerUpBackground {
+    background-image: url("s2r://materials/portraits_card/portrait_backgrounds/vengeful_spirit_psd.vtex");
+}
+
+.HeroSelectCard.Hero_dragonus .PowerUpBackground {
+    background-image: url("s2r://panorama/images/events/monster_hunter/heroes_icons/npc_dota_hero_skywrath_mage_psd.vtex");
+}
+
+.HeroSelectCard.Hero_kez .PowerUpBackground {
+    background-image: url("s2r://materials/portraits_card/portrait_backgrounds/antimage_persona_psd.vtex");
+}
+
+/* =========================
+   Start Button
+   ========================= */
+
+.SurvivorsPrimaryButton {
+    min-width: 220px;
+    height: 54px;
+    horizontal-align: center;
+    background-color: gradient(linear, 0% 0%, 0% 100%, from(#c7933f), to(#5c3510));
+    border: 1px solid #f0ce92;
+    box-shadow: 0px 4px 24px rgba(0, 0, 0, 0.65);
+    transition-property: brightness, transform;
+    transition-duration: 0.12s;
+}
+
+.SurvivorsPrimaryButton:hover {
+    brightness: 1.6;
+    transform: translateY(-2px);
+}
+
+.SurvivorsPrimaryButton Label {
+    horizontal-align: center;
+    vertical-align: center;
+    color: white;
+    font-family: titleFont;
+    font-size: 20px;
+    letter-spacing: 1px;
+    text-shadow: 0px 2px 6px black;
+}
+
+/* =========================
+   Game HUD safety
+   ========================= */
+
+.GameUI {
+    width: 100%;
+    height: 100%;
+}
+
+.MainHud .GameUI {
+    width: 100%;
+    height: 100%;
+    visibility: visible;
+}
+
+.MainHud .PlayerHudContainer {
+    transform: none;
+    opacity: 1;
+    visibility: visible;
+    z-index: 100;
+}
+
+.MainHud .TimerContainer {
+    transform: none;
+    opacity: 1;
+    visibility: visible;
+    z-index: 100;
+}
+
+.PlayerExpContainer .ExpText,
+.PlayerHudContainer .PlayerExpContainer .PlayerExpLevelLabelsContainer .GemCounter .ExpText {
+    visibility: visible;
+    font-size: 11px;
+}
+
+/* Level-up overlay overrides to isolate extracted PowerUpChoice styling */
+.LevelUpOverlay {
+    width: 100%;
+    height: 100%;
+    z-index: 2000;
+    background-color: rgba(0, 0, 0, 0.62);
+}
+.LevelUpOverlay.Hidden {
+    visibility: collapse;
+}
+.LevelUpOverlay .PlayerLevelUpChoiceWrapper {
+    opacity: 1;
+    transform: none;
+    horizontal-align: center;
+    vertical-align: middle;
+}
+.LevelUpOverlay #PlayerLevelUpChoiceContainer {
+    flow-children: right;
+    horizontal-align: center;
+}
+
+/* =========================
+   Top HUD polish
+   ========================= */
+
+.MainHud .TimerContainer {
+    horizontal-align: center;
+    vertical-align: top;
+    margin-top: 8px;
+    height: 72px;
+    opacity: 1;
+    transform: none;
+    visibility: visible;
+    z-index: 120;
+}
+
+.MainHud .TimerContainer .TimerInfoContainer {
+    flow-children: right;
+    horizontal-align: center;
+    vertical-align: top;
+    padding: 8px 18px;
+    background-color: gradient(linear, 0% 0%, 0% 100%, from(#1d2633ee), to(#07090dee));
+    border: 1px solid rgba(240, 206, 146, 0.22);
+    box-shadow: 0px 4px 22px rgba(0, 0, 0, 0.65);
+}
+
+.MainHud .TimerContainer .ScoreData,
+.MainHud .TimerContainer .GoldData {
+    flow-children: down;
+    width: 112px;
+    horizontal-align: center;
+    vertical-align: center;
+}
+
+.MainHud .TimerContainer .ScoreLabel,
+.MainHud .TimerContainer .GoldLabel {
+    horizontal-align: center;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.48);
+    font-size: 12px;
+    letter-spacing: 1px;
+    text-shadow: 0px 2px 6px black;
+    margin-bottom: -2px;
+}
+
+.MainHud .TimerContainer .ScoreHUD,
+.MainHud .TimerContainer .GoldHUD {
+    horizontal-align: center;
+    text-align: center;
+    color: white;
+    font-size: 22px;
+    font-weight: bold;
+    text-shadow: 0px 2px 8px black;
+}
+
+.MainHud .TimerContainer .GoldDataContainer {
+    flow-children: right;
+    horizontal-align: center;
+}
+
+.MainHud .TimerContainer .GoldIcon {
+    width: 20px;
+    height: 20px;
+    vertical-align: center;
+    margin-left: 3px;
+    img-shadow: 0px 2px 8px black;
+}
+
+.MainHud .TimerContainer .Dash {
+    width: 1px;
+    height: 38px;
+    margin: 0px 10px;
+    vertical-align: center;
+    background-color: gradient(
+        linear,
+        0% 0%,
+        0% 100%,
+        from(rgba(255, 255, 255, 0)),
+        color-stop(0.35, rgba(255, 255, 255, 0.15)),
+        color-stop(0.65, rgba(255, 255, 255, 0.15)),
+        to(rgba(255, 255, 255, 0))
+    );
+}
+
+.WarmSceneGrade {
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    hittest: false;
+
+    
+
+    opacity: 1;
+    saturation: 1.08;
+    brightness: 1.04;
+}
+

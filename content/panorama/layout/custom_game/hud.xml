@@ -1,0 +1,107 @@
+<root>
+    <scripts>
+        <include src="file://{resources}/scripts/custom_game/hud.js" />
+    </scripts>
+
+    <styles>
+        <include src="s2r://panorama/styles/dotastyles.vcss_c" />
+        <include src="file://{resources}/styles/custom_game/survivors_extracted.css" />
+        <include src="file://{resources}/styles/custom_game/hud.css" />
+    </styles>
+
+    <Panel class="MainHud Survivors">
+        
+        <Panel id="HeroSelectOverlay" class="HeroSelectOverlay">
+            <Panel class="HeroSelectDim" />
+            <Panel class="HeroSelectHeader">
+                <Label class="HeroSelectEyebrow" text="NEST OF THORNS" />
+                <Label class="HeroSelectTitle" text="CHOOSE YOUR HERO" />
+                <Label class="HeroSelectSubtitle" text="Each hero starts with a unique weapon and upgrade path." />
+            </Panel>
+
+            <Panel class="HeroSelectChoiceWrapper">
+                <Panel id="HeroSelectChoices" class="HeroSelectChoices" />
+                <Panel class="HeroSelectActions">
+                    <Button id="ConfirmHeroBtn" class="SurvivorsPrimaryButton Hidden" onactivate="ConfirmHeroSelection()">
+                        <Label text="START RUN" />
+                    </Button>
+                </Panel>
+            </Panel>
+        </Panel>
+
+        <Panel id="GameUIScreen" class="GameUI Hidden">
+            <Panel id="WarmSceneGrade" class="WarmSceneGrade" hittest="false" />
+            <Panel class="TimerContainer">
+            <Panel class="TopHudBackground" />
+
+            <Panel class="TimerInfoContainer">
+                <Panel class="ScoreData">
+                    <Label class="ScoreLabel LabelSmall" text="TIME" />
+                    <Label id="TimerHUD" class="ScoreHUD" text="00:00" />
+                </Panel>
+
+                <Panel class="Dash" />
+
+                <Panel class="GoldData">
+                    <Label class="GoldLabel LabelSmall" text="GOLD" />
+                    <Panel class="GoldDataContainer">
+                        <Label id="GoldHUD" class="GoldHUD GoldText" text="0" />
+                        <Image class="GoldIcon" src="s2r://panorama/images/hud/reborn/gold_small_psd.vtex" />
+                    </Panel>
+                </Panel>
+
+                <Panel class="Dash" />
+
+                <Panel class="ScoreData">
+                    <Label class="ScoreLabel LabelSmall" text="KILLS" />
+                    <Label id="KillsHUD" class="ScoreHUD" text="0" />
+                </Panel>
+            </Panel>
+        </Panel>
+
+            <Panel class="PlayerHudContainer">
+                <Panel class="PlayerExp">
+                    <Panel class="GemImage" />
+                    <Panel class="PlayerExpContainer">
+                        <Panel class="PlayerExpProgressCircle" />
+                        <Panel id="PlayerExpProgressCircleFilled" />
+                        <Panel class="PlayerExpLevelLabelsContainer">
+                            <Label id="PlayerLevelText" class="LevelText GoldText" text="1" />
+                            <Panel class="GemCounter">
+                                <Label id="PlayerExpText" class="ExpText" text="0 / 5" />
+                            </Panel>
+                        </Panel>
+                    </Panel>
+                </Panel>
+
+                <Panel class="PlayerHeroPortraitContainer">
+                    <DOTAHeroPortrait id="HeroPortrait" />
+                </Panel>
+
+                <Panel class="PlayerAbilitiesContainer">
+                    <Panel class="PlayerAbilitiesBackground" />
+                    <Panel class="PlayerInnatesAndActiveContainer">
+                        <Panel id="PlayerInnateContainer" />
+                        <Panel id="PlayerActiveContainer" />
+                    </Panel>
+                    <Panel class="PlayerHealthContainer">
+                        <ProgressBar id="PlayerHealthProgressBar" />
+                        <Label id="PlayerHealthText" class="PlayerHealth" text="" />
+                    </Panel>
+                </Panel>
+
+                <Panel class="PlayerItemsContainer">
+                    <Panel id="PlayerPassiveContainer" />
+                </Panel>
+            </Panel>
+
+            <Panel id="LevelUpOverlay" class="LevelUpOverlay Hidden">
+                <Panel class="PlayerLevelUpChoiceWrapper">
+                    <Label class="LevelUpTitle TitleExtraLarge" text="LEVEL UP" />
+                    <Panel id="PlayerLevelUpChoiceContainer" />
+                </Panel>
+            </Panel>
+        </Panel>
+
+    </Panel>
+</root>

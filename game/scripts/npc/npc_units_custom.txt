@@ -1,0 +1,54 @@
+"DOTAUnits"
+{
+    "npc_survivors_enemy"
+    {
+        "BaseClass"                 "npc_dota_creature"
+        "Model"                     "models/events/crownfall/survivors/skeleton_melee/skeleton_melee.vmdl"
+        "SoundSet"                  "Creep_Bad_Melee"
+        "Level"                     "1"
+
+        "StatusHealth"              "100"
+        "MovementSpeed"             "200"
+        "MovementCapabilities"      "DOTA_UNIT_CAP_MOVE_GROUND"
+        "AttackCapabilities"        "DOTA_UNIT_CAP_NO_ATTACK"
+
+        "VisionDaytimeRange"        "500"
+        "VisionNighttimeRange"      "500"
+        "BoundsHullName"            "DOTA_HULL_SIZE_REGULAR"
+        "HealthBarOffset"           "120"
+
+        "BountyXP"                  "0"
+        "BountyGoldMin"             "0"
+        "BountyGoldMax"             "0"
+
+        "HasInventory"              "0"
+        "CanBeDominated"            "0"
+        "ConsideredHero"            "0"
+
+        "Creature"
+        {
+            "DisableClumpingBehavior" "1"
+        }
+    }
+
+    "npc_survivors_xp_gem"
+    {
+        "BaseClass"                 "npc_dota_creature"
+        "Model"                     "models/events/crownfall/survivors/survivor_gem.vmdl"
+        "SoundSet"                  "0"
+        "Level"                     "1"
+        "StatusHealth"              "1"
+        "MovementCapabilities"      "DOTA_UNIT_CAP_MOVE_NONE"
+        "AttackCapabilities"        "DOTA_UNIT_CAP_NO_ATTACK"
+        "VisionDaytimeRange"        "0"
+        "VisionNighttimeRange"      "0"
+        "BoundsHullName"            "DOTA_HULL_SIZE_SMALL"
+        "HealthBarOffset"           "-1"
+        "BountyXP"                  "0"
+        "BountyGoldMin"             "0"
+        "BountyGoldMax"             "0"
+        "HasInventory"              "0"
+        "CanBeDominated"            "0"
+        "ConsideredHero"            "0"
+    }
+}
