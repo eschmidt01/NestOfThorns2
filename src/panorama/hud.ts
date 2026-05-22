@@ -14,8 +14,8 @@ GameUI.SetDefaultUIEnabled(DotaDefaultUIElement_t.DOTA_DEFAULT_UI_INVENTORY_SHOP
 GameUI.SetDefaultUIEnabled(DotaDefaultUIElement_t.DOTA_DEFAULT_UI_INVENTORY_ITEMS, false);
 
 // Valve's Exact Camera Math derived from [3300, -3300, 6600]
-const SURVIVORS_CAMERA_DISTANCE = 2100;
-const SURVIVORS_CAMERA_PITCH = 60;
+const SURVIVORS_CAMERA_DISTANCE = 1800;
+const SURVIVORS_CAMERA_PITCH = 55;
 const SURVIVORS_CAMERA_YAW = -135;
 
 type HeroChoice = {
@@ -96,7 +96,7 @@ function maintainCameraLock() {
         }
     }
 
-    $.Schedule(0.1, maintainCameraLock);
+    $.Schedule(0.03, maintainCameraLock);
 }
 
 

@@ -3,6 +3,12 @@ import { SurvivorsHeroDefinition } from "./SurvivorsInterface";
 
 export type SurvivorsHeroKey = keyof typeof SURVIVORS_HEROES;
 
+const HERO_ID_TO_NAME: Record<number, string> = {
+    20: "npc_dota_hero_vengefulspirit",
+    101: "npc_dota_hero_skywrath_mage",
+    145: "npc_dota_hero_kez"
+};
+
 export function isSurvivorsHeroKey(key: string): key is SurvivorsHeroKey {
     return key in SURVIVORS_HEROES;
 }
@@ -34,14 +40,14 @@ export class HeroSelection {
         }, undefined);
 
         CustomGameEventManager.RegisterListener("survivors_select_hero", (_, data) => {
-            const payload = data as { PlayerID: PlayerID; heroKey?: string };
-            const playerId = payload.PlayerID;
+            const payload = data as { PlayerID?: PlayerID; player_id?: PlayerID; heroKey?: string };
+            const playerId = payload.PlayerID ?? payload.player_id;
             const heroKey = tostring(payload.heroKey ?? "");
 
-            if (isSurvivorsHeroKey(heroKey)) {
+            if (playerId !== undefined && isSurvivorsHeroKey(heroKey)) {
                 this.selectHero(playerId, heroKey);
             } else {
-                print(`[HERO SELECT] Invalid UI hero key: ${heroKey}`);
+                print(`[HERO SELECT] Invalid UI hero key or missing PlayerID: ${heroKey} / ${playerId}`);
             }
         });
 
@@ -76,7 +82,7 @@ export class HeroSelection {
         }
 
         print(`[HERO SELECT] Replacing ${oldHero.GetUnitName()} with ID ${definition.dotaHeroId}`);
-        const heroName = DOTAGameManager.GetHeroUnitNameByID(definition.dotaHeroId) || "";
+        const heroName = HERO_ID_TO_NAME[definition.dotaHeroId] || "npc_dota_hero_wisp";
         const newHero = PlayerResource.ReplaceHeroWith(
             playerId,
             heroName,
@@ -85,7 +91,7 @@ export class HeroSelection {
         ) as CDOTA_BaseNPC_Hero | undefined;
 
         if (!newHero) {
-            print(`[HERO SELECT] FAILED to replace hero for player ${playerId}`);
+            print(`[HERO SELECT] FAILED to replace hero for player ${playerId} with ${heroName}`);
             return;
         }
 

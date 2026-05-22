@@ -450,6 +450,7 @@
     vertical-align: bottom;
     horizontal-align: center;
     transform: translateY( 14px );
+    z-index: 2;
 }
 
 .PlayerHudContainer .PlayerExpContainer

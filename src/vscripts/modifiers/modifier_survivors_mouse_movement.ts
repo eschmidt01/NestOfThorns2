@@ -1,3 +1,4 @@
+// src/vscripts/modifiers/modifier_survivors_mouse_movement.ts
 import {
     BaseModifier,
     registerModifier,
@@ -96,7 +97,7 @@ export class modifier_survivors_mouse_movement extends BaseModifier {
 
         if (GridNav.IsTraversable(nextPos) && !GridNav.IsBlocked(nextPos)) {
             parent.SetAbsOrigin(nextPos);
-            ResolveNPCPositions(nextPos, 96);
+            // Removed ResolveNPCPositions(nextPos, 96) to prevent enemies violently exploding outward on hero collision
             this.startRunAnimation(parent);
         } else {
             this.stopRunAnimation();

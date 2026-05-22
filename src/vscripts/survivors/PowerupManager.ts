@@ -202,7 +202,7 @@ export class PowerupManager {
         for (const key in SURVIVORS_POWERUPS) {
             const def = SURVIVORS_POWERUPS[key];
             this.powerupsById.set(def.powerUpId, def);
-            if (((def as any).recipeItems ?? []).length > 0) {
+            if (def.recipeItems !== undefined && def.recipeItems.length > 0) {
                 this.recipeIds.push(def.powerUpId);
             }
         }
@@ -253,7 +253,7 @@ export class PowerupManager {
         for (const recipeId of this.recipeIds) {
             const recipe = this.powerupsById.get(recipeId);
             if (!recipe) continue;
-            if (inv.levels.get(recipeId) ?? 0) continue;
+            if ((inv.levels.get(recipeId) ?? 0) > 0) continue;
             if (!this.canCraftRecipe(hero, recipeId, true)) continue;
 
             choices.push({
@@ -268,18 +268,18 @@ export class PowerupManager {
                 currentLevel: 0,
                 nextLevel: 1,
                 maxLevel: this.getMaxLevel(recipe),
-                recipeItems: ((recipe as any).recipeItems ?? []) as number[],
+                recipeItems: recipe.recipeItems ?? [],
             });
         }
 
         for (const [id, def] of this.powerupsById) {
-            if ((def as any).rollable === false) continue;
-            if ((def as any).isGold) continue;
+            if (def.rollable === false) continue;
+            if (def.isGold) continue;
 
             const category = this.getPowerupCategory(def);
             const currentLevel = inv.levels.get(id) ?? 0;
             const maxLevel = this.getMaxLevel(def);
-            const recipeItems = ((def as any).recipeItems ?? []) as number[];
+            const recipeItems = def.recipeItems ?? [];
 
             // Recipe items should enter through the evolution path, not normal random rolls.
             if (recipeItems.length > 0 && currentLevel === 0) continue;
@@ -327,7 +327,7 @@ export class PowerupManager {
                 });
             }
 
-            const minors = ((def as any).minorUpgradeChoices ?? []) as UpgradeChoiceDefinition[];
+            const minors = def.minorUpgradeChoices ?? [];
             for (let i = 0; i < minors.length; i++) {
                 const minor = minors[i];
                 choices.push({
@@ -415,7 +415,7 @@ export class PowerupManager {
         if (chosen) this.addChosenUpgrade(inv, powerUpId, chosen);
 
         if (category === "active" || category === "innate") {
-            if (!inv.runtimes.get(powerUpId) && !((def as any).isPassive)) {
+            if (!inv.runtimes.get(powerUpId) && !(def.isPassive)) {
                 const runtime: ActivePowerupRuntime = {
                     hero,
                     powerUpId,
@@ -438,7 +438,7 @@ export class PowerupManager {
         const inv = this.getInventory(hero);
         const recipe = this.powerupsById.get(recipePowerUpId);
         if (!inv || !recipe) return false;
-        const components = ((recipe as any).recipeItems ?? []) as number[];
+        const components = recipe.recipeItems ?? [];
         if (components.length === 0) return false;
 
         for (const componentId of components) {
@@ -460,7 +460,7 @@ export class PowerupManager {
         if (!inv || !recipe) return false;
         if (!this.canCraftRecipe(hero, recipePowerUpId, true)) return false;
 
-        const components = ((recipe as any).recipeItems ?? []) as number[];
+        const components = recipe.recipeItems ?? [];
         for (const componentId of components) {
             this.removePowerup(hero, componentId);
         }
@@ -606,7 +606,7 @@ export class PowerupManager {
 
         if ((inv.levels.get(powerUpId) ?? 0) <= 0) return result;
 
-        this.addAttributesToMap(result, ((def as any).baseAttributes ?? []) as AttributeValue[]);
+        this.addAttributesToMap(result, def.baseAttributes ?? []);
 
         const upgrades = inv.upgrades.get(powerUpId) ?? [];
         for (const upgrade of upgrades) {
@@ -682,7 +682,7 @@ export class PowerupManager {
     private defaultAuthoredIndexForNextLevel(def: SurvivorsPowerUpDefinition, nextLevel: number): number {
         // Actives normally have baseAttributes for level 1, so authored[0] is the level 2 upgrade.
         // Pure passives like Crystalys often have no baseAttributes, so authored[0] is the acquisition payload.
-        const hasBase = (((def as any).baseAttributes ?? []) as AttributeValue[]).length > 0;
+        const hasBase = (def.baseAttributes !== undefined && def.baseAttributes.length > 0);
         return hasBase ? nextLevel - 2 : nextLevel - 1;
     }
 
@@ -766,7 +766,7 @@ export class PowerupManager {
             return;
         }
 
-        if (key) {
+        if (key !== undefined && key !== "") {
             this.fireAreaAroundHero(hero, powerUpId, def);
         }
     }
@@ -1376,34 +1376,7 @@ export class PowerupManager {
     }
 
     private getEnemiesInRadius(hero: CDOTA_BaseNPC_Hero, position: Vector, radius: number): CDOTA_BaseNPC[] {
-        const manager = this.enemyManager as any;
-        if (manager.getEnemiesInRange) {
-            return manager.getEnemiesInRange(position, radius) as CDOTA_BaseNPC[];
-        }
-        if (manager.getEnemiesInRadius) {
-            return manager.getEnemiesInRadius(position, radius) as CDOTA_BaseNPC[];
-        }
-        if (manager.getEnemies) {
-            const result: CDOTA_BaseNPC[] = [];
-            const enemies = manager.getEnemies() as CDOTA_BaseNPC[];
-            for (const enemy of enemies) {
-                if (!enemy || enemy.IsNull() || !enemy.IsAlive()) continue;
-                if (this.vecDistance2D(enemy.GetAbsOrigin(), position) <= radius) result.push(enemy);
-            }
-            return result;
-        }
-
-        return FindUnitsInRadius(
-            hero.GetTeamNumber(),
-            position,
-            undefined,
-            radius,
-            DOTA_UNIT_TARGET_TEAM_ENEMY,
-            DOTA_UNIT_TARGET_BASIC + DOTA_UNIT_TARGET_HERO,
-            DOTA_UNIT_TARGET_FLAG_NONE,
-            FindOrder.FIND_CLOSEST,
-            false,
-        );
+        return this.enemyManager.getEnemiesInRadiusFast(position.x, position.y, radius);
     }
 
     // =========================================================================
@@ -1484,9 +1457,9 @@ export class PowerupManager {
     }
 
     private dotaDamageType(kind: DamageKind): DamageTypes {
-        if (kind === "physical") return DAMAGE_TYPE_PHYSICAL;
-        if (kind === "pure") return DAMAGE_TYPE_PURE;
-        return DAMAGE_TYPE_MAGICAL;
+        if (kind === "physical") return DamageTypes.PHYSICAL;
+        if (kind === "pure") return DamageTypes.PURE;
+        return DamageTypes.MAGICAL;
     }
 
     // =========================================================================
@@ -1501,7 +1474,7 @@ export class PowerupManager {
 
         const levels: Record<string, number> = {};
         for (const [id, level] of inv.levels) {
-            levels[String(id)] = level;
+            levels[tostring(id)] = level;
         }
 
         const payload = {
@@ -1540,7 +1513,7 @@ export class PowerupManager {
                 currentLevel,
                 nextLevel: 1,
                 maxLevel: this.getMaxLevel(def),
-                recipeItems: ((def as any).recipeItems ?? []) as number[],
+                recipeItems: def.recipeItems ?? [],
             };
         }
 
@@ -1582,8 +1555,8 @@ export class PowerupManager {
     }
 
     private getPowerupCategory(def: SurvivorsPowerUpDefinition): PowerupCategory {
-        if ((def as any).isInnate) return "innate";
-        if ((def as any).isPassive || (def as any).isGold) return "passive";
+        if (def.isInnate) return "innate";
+        if (def.isPassive || def.isGold) return "passive";
         return "active";
     }
 
@@ -1592,18 +1565,18 @@ export class PowerupManager {
     }
 
     private getMaxLevel(def: SurvivorsPowerUpDefinition): number {
-        return (def as any).maxLevel ?? 1;
+        return def.maxLevel ?? 1;
     }
 
     private getAuthoredUpgrade(def: SurvivorsPowerUpDefinition, index: number): UpgradeChoiceDefinition | undefined {
         if (index < 0) return undefined;
-        const upgrades = ((def as any).authoredUpgradeChoices ?? []) as UpgradeChoiceDefinition[];
+        const upgrades = def.authoredUpgradeChoices ?? [];
         return upgrades[index];
     }
 
     private getMinorUpgrade(def: SurvivorsPowerUpDefinition, index: number): UpgradeChoiceDefinition | undefined {
         if (index < 0) return undefined;
-        const upgrades = ((def as any).minorUpgradeChoices ?? []) as UpgradeChoiceDefinition[];
+        const upgrades = def.minorUpgradeChoices ?? [];
         return upgrades[index];
     }
 
@@ -1613,7 +1586,7 @@ export class PowerupManager {
 
     private playParticleAtUnit(particleName?: string, unit?: CDOTA_BaseNPC) {
         if (!particleName || !unit || unit.IsNull()) return;
-        const p = ParticleManager.CreateParticle(particleName, PATTACH_ABSORIGIN_FOLLOW, unit);
+        const p = ParticleManager.CreateParticle(particleName, ParticleAttachment.ABSORIGIN_FOLLOW, unit);
         ParticleManager.ReleaseParticleIndex(p);
     }
 
@@ -1624,7 +1597,7 @@ export class PowerupManager {
 
     private createParticleAtPosition(particleName: string | undefined, position: Vector, radius = 0): ParticleID | undefined {
         if (!particleName) return undefined;
-        const p = ParticleManager.CreateParticle(particleName, PATTACH_WORLDORIGIN, undefined);
+        const p = ParticleManager.CreateParticle(particleName, ParticleAttachment.WORLDORIGIN, undefined);
         ParticleManager.SetParticleControl(p, 0, position);
         if (radius > 0) ParticleManager.SetParticleControl(p, 1, Vector(radius, radius, radius));
         return p;
@@ -1637,7 +1610,7 @@ export class PowerupManager {
 
     private createLinearProjectileParticle(particleName: string | undefined, start: Vector, end: Vector): ParticleID | undefined {
         if (!particleName) return undefined;
-        const p = ParticleManager.CreateParticle(particleName, PATTACH_WORLDORIGIN, undefined);
+        const p = ParticleManager.CreateParticle(particleName, ParticleAttachment.WORLDORIGIN, undefined);
         ParticleManager.SetParticleControl(p, 0, start);
         ParticleManager.SetParticleControl(p, 1, end);
         return p;

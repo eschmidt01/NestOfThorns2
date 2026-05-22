@@ -111,7 +111,7 @@ export class GameMode {
     }
 
     public static Activate(this: void) {
-        if (GameRules.Addon) {
+        if (GameRules.Addon !== undefined) {
             print("GameMode already activated, skipping duplicate Activate()");
             return;
         }
@@ -242,12 +242,12 @@ export class GameMode {
 
         mode.SetAnnouncerDisabled(true);
         mode.SetCameraSmoothCountOverride(1);
-        mode.SetCameraZRange(0, 5000);
         mode.SetBuybackEnabled(false);
         mode.SetStashPurchasingDisabled(true);
         mode.SetUseCustomHeroLevels(false);
-        GameRules.SetTimeOfDay(0.5);
-         mode.SetDaynightCycleDisabled(true);
+        mode.SetCameraZRange(-1000, 12000);
+        GameRules.SetTimeOfDay(0.25);
+        mode.SetDaynightCycleDisabled(false);
         mode.SetFogOfWarDisabled(true);
         mode.SetUnseenFogOfWarEnabled(false);
         mode.SetLoseGoldOnDeath(false);
@@ -336,13 +336,6 @@ private onEntityKilled(event: EntityKilledEvent) {
     if (!killed || killed.IsNull()) return;
 
     if ((killed as any).__survivorsEnemyKey) {
-        // ADD THIS: Check health just before they die to see if it's 0
-        if (killed.GetHealth() <= 0) {
-            print(`[DEBUG] Enemy ${killed.GetUnitName()} died at position ${tostring(killed.GetAbsOrigin())}`);
-            // Check for death damage
-            print(`[DEBUG] Damage Flags: ${event.damagebits}`);
-        }
-        
         this.killCount++;
         this.enemyManager.handleEnemyKilled(killed);
     }
@@ -363,6 +356,7 @@ private onEntityKilled(event: EntityKilledEvent) {
 
     private startSurvivorsMode() {
         print("=== GAME IN PROGRESS: START SURVIVORS MODE ===");
+
         this.pickupManager.start();
         this.enemyManager.start(this.runStartTime);
     }
@@ -592,7 +586,7 @@ private onEntityKilled(event: EntityKilledEvent) {
             DotaTeam.BADGUYS,
         );
 
-        if (enemy) {
+        if (enemy !== undefined) {
             print(`Spawned test enemy: ${enemy.GetUnitName()} ${tostring(enemy.GetAbsOrigin())}`);
         } else {
             print("FAILED to spawn test enemy");
@@ -663,6 +657,38 @@ private onEntityKilled(event: EntityKilledEvent) {
         }
 
         return undefined;
+    }
+
+    private spawnGlowParticle(pos: Vector) {
+        const particle = ParticleManager.CreateParticle(
+            "particles/generic_gameplay/rune_bounty_owner.vpcf",
+            ParticleAttachment.WORLDORIGIN,
+            undefined,
+        );
+
+        ParticleManager.SetParticleControl(particle, 0, Vector(pos.x, pos.y, pos.z + 80));
+        ParticleManager.SetParticleControl(particle, 1, Vector(255, 190, 120));
+
+        print(`[LIGHT] Spawned glow particle ${particle}`);
+    }
+
+    private spawnArenaGlow() {
+        const center = this.activePlayerHero?.GetAbsOrigin() ?? Vector(8496, -11328, 594);
+
+        const points = [
+            Vector(center.x + 900, center.y, center.z),
+            Vector(center.x - 900, center.y, center.z),
+            Vector(center.x, center.y + 900, center.z),
+            Vector(center.x, center.y - 900, center.z),
+            Vector(center.x + 650, center.y + 650, center.z),
+            Vector(center.x - 650, center.y + 650, center.z),
+            Vector(center.x + 650, center.y - 650, center.z),
+            Vector(center.x - 650, center.y - 650, center.z),
+        ];
+
+        for (const point of points) {
+            this.spawnGlowParticle(point);
+        }
     }
 
     private stateName(state: GameState): string {

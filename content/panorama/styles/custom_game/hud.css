@@ -366,11 +366,10 @@
 /* =========================
    Top HUD polish
    ========================= */
-
 .MainHud .TimerContainer {
     horizontal-align: center;
     vertical-align: top;
-    margin-top: 8px;
+    margin-top: -4px;
     height: 72px;
     opacity: 1;
     transform: none;
@@ -382,16 +381,18 @@
     flow-children: right;
     horizontal-align: center;
     vertical-align: top;
-    padding: 8px 18px;
-    background-color: gradient(linear, 0% 0%, 0% 100%, from(#1d2633ee), to(#07090dee));
-    border: 1px solid rgba(240, 206, 146, 0.22);
-    box-shadow: 0px 4px 22px rgba(0, 0, 0, 0.65);
+    padding: 9px 30px;
+    background-image: url("file://{images}/custom_game/hud_mask.png");
+    background-size: 100% 100%;
+    background-position: 100% 100%;
+    background-repeat: no-repeat;
 }
 
 .MainHud .TimerContainer .ScoreData,
 .MainHud .TimerContainer .GoldData {
     flow-children: down;
     width: 112px;
+    height: 55px;
     horizontal-align: center;
     vertical-align: center;
 }
@@ -404,7 +405,7 @@
     font-size: 12px;
     letter-spacing: 1px;
     text-shadow: 0px 2px 6px black;
-    margin-bottom: -2px;
+    margin-bottom: 0px;
 }
 
 .MainHud .TimerContainer .ScoreHUD,

@@ -1,6 +1,9 @@
 type PickupRuntime = {
     unit: CDOTA_BaseNPC;
     experienceReward: number;
+    posX: number;
+    posY: number;
+    posZ: number;
 };
 
 export class PickupManager {
@@ -61,9 +64,10 @@ export class PickupManager {
         this.pickups.set(pickup.GetEntityIndex(), {
             unit: pickup,
             experienceReward,
+            posX: spawnPos.x,
+            posY: spawnPos.y,
+            posZ: spawnPos.z,
         });
-
-        print(`[PICKUP] Spawned XP gem reward=${experienceReward} at ${tostring(spawnPos)}`);
     }
 
     private updatePickups() {
@@ -73,7 +77,11 @@ export class PickupManager {
         if (!hero || hero.IsNull() || !hero.IsAlive()) return;
 
         const heroPos = hero.GetAbsOrigin();
-        const pickupRadius = 260;
+        const pickupRadiusSq = 260 * 260; // 67600
+        const collectionRadiusSq = 80 * 80; // 6400
+        const hx = heroPos.x;
+        const hy = heroPos.y;
+        const hz = heroPos.z;
 
         for (const [entityIndex, runtime] of this.pickups) {
             const pickup = runtime.unit;
@@ -83,28 +91,28 @@ export class PickupManager {
                 continue;
             }
 
-            const pickupPos = pickup.GetAbsOrigin();
-            const toHero = Vector(
-                heroPos.x - pickupPos.x,
-                heroPos.y - pickupPos.y,
-                heroPos.z - pickupPos.z,
-            );
-            const distance = toHero.Length2D();
+            const dx = hx - runtime.posX;
+            const dy = hy - runtime.posY;
+            const dz = hz - runtime.posZ;
+            const distSq = dx * dx + dy * dy;
 
-            if (distance <= 80) {
+            if (distSq <= collectionRadiusSq) {
                 this.collectPickup(entityIndex, runtime);
                 continue;
             }
 
-            if (distance <= pickupRadius) {
-                const direction = toHero.Normalized();
+            if (distSq <= pickupRadiusSq) {
+                const distance = Math.sqrt(distSq + dz * dz);
+                const dirX = dx / distance;
+                const dirY = dy / distance;
+                const dirZ = dz / distance;
                 const speed = 900;
                 const dt = 0.05;
-                const nextPos = Vector(
-                    pickupPos.x + direction.x * speed * dt,
-                    pickupPos.y + direction.y * speed * dt,
-                    pickupPos.z + direction.z * speed * dt,
-                );
+                runtime.posX += dirX * speed * dt;
+                runtime.posY += dirY * speed * dt;
+                runtime.posZ += dirZ * speed * dt;
+
+                const nextPos = Vector(runtime.posX, runtime.posY, runtime.posZ);
                 pickup.SetAbsOrigin(nextPos);
 
                 const particle = (pickup as any).__survivorsPickupParticle as ParticleID | undefined;
